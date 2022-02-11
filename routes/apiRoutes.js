@@ -52,7 +52,7 @@ router.get("/user/:id", jwtAuth, getUserByIdController);
 router.put("/user", jwtAuth, updateUserController);
 
 // apply for a job [todo: test: done]
-router.post("/jobs/:id/applications", applyForJobController);
+router.post("/jobs/:id/applications",jwtAuth, applyForJobController);
 
 // recruiter gets applications for a particular job [pagination] [todo: test: done]
 router.get("/jobs/:id/applications", jwtAuth, getApplicationsForJobController);

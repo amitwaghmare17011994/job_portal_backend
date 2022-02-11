@@ -1,4 +1,5 @@
 const Application = require("../../db/Application");
+const Job = require("../../db/Job");
 
 const getApplicationsController = (req, res) => {
   const user = req.user;
@@ -66,8 +67,7 @@ const updateApplicationController = (req, res) => {
   // "deleted", // when any job is deleted
   // "cancelled", // an application is cancelled by its author or when other application is accepted
   // "finished", // when job is over
-
-  if (user.type === "recruiter") {
+   if (user.type === "recruiter") {
     if (status === "accepted") {
       // get job id from application
       // get job info for maxPositions count
@@ -79,6 +79,7 @@ const updateApplicationController = (req, res) => {
         recruiterId: user._id,
       })
         .then((application) => {
+ 
           if (application === null) {
             res.status(404).json({
               message: "Application not found",
@@ -102,7 +103,7 @@ const updateApplicationController = (req, res) => {
               jobId: job._id,
               status: "accepted",
             }).then((activeApplicationCount) => {
-              if (activeApplicationCount < job.maxPositions) {
+               if (activeApplicationCount < job.maxPositions) {
                 // accepted
                 application.status = status;
                 application.dateOfJoining = req.body.dateOfJoining;
@@ -133,6 +134,7 @@ const updateApplicationController = (req, res) => {
                       { multi: true }
                     )
                       .then(() => {
+ 
                         if (status === "accepted") {
                           Job.findOneAndUpdate(
                             {
@@ -160,10 +162,12 @@ const updateApplicationController = (req, res) => {
                         }
                       })
                       .catch((err) => {
+
                         res.status(400).json(err);
                       });
                   })
                   .catch((err) => {
+ 
                     res.status(400).json(err);
                   });
               } else {
@@ -175,6 +179,7 @@ const updateApplicationController = (req, res) => {
           });
         })
         .catch((err) => {
+           
           res.status(400).json(err);
         });
     } else {
@@ -210,14 +215,14 @@ const updateApplicationController = (req, res) => {
           }
         })
         .catch((err) => {
+           
+
           res.status(400).json(err);
         });
     }
   } else {
     if (status === "cancelled") {
-      console.log(id);
-      console.log(user._id);
-      Application.findOneAndUpdate(
+       Application.findOneAndUpdate(
         {
           _id: id,
           userId: user._id,
@@ -229,12 +234,13 @@ const updateApplicationController = (req, res) => {
         }
       )
         .then((tmp) => {
-          console.log(tmp);
+           
           res.json({
             message: `Application ${status} successfully`,
           });
         })
         .catch((err) => {
+           
           res.status(400).json(err);
         });
     } else {

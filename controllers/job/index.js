@@ -18,6 +18,7 @@ const getJobsController = async (req, res) => {
       return;
     }
     const jobs = await getNonAppliedJob(user._id, posts);
+     
     return res.json(jobs);
   } catch (err) {
     return res.status(400).json(err);

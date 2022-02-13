@@ -1,15 +1,16 @@
 const Application = require("../../db/Application");
 
-const isJobAlreadyApplied = async (userId, jobId) => {
+const getCurrentUserJobObject = async (userId, jobId) => {
   return new Promise((resolve, reject) => {
     Application.findOne({
       userId: userId,
       jobId: jobId,
+
       status: {
-        $nin: ["deleted", "accepted", "cancelled"],
+        $nin: ["deleted", "accepted"],
       },
     }).then((application) => {
-      return resolve(application !== null);
+      return resolve(application );
     });
   });
 };
@@ -19,10 +20,12 @@ const getNonAppliedJob = async (userId, jobs) => {
     const nonAppliedJobs = [];
     for (let i = 0; i < jobs.length; i++) {
       const job = jobs[i];
-      const isAlereadyApplied = await isJobAlreadyApplied(userId, job._id);
-      if (!isAlereadyApplied) {
-        nonAppliedJobs.push(job);
-      }
+      const currentUserJob = await getCurrentUserJobObject(userId, job._id);
+      if(currentUserJob) 
+      job.status=currentUserJob.status;
+
+      nonAppliedJobs.push(job);
+
     }
     return resolve(nonAppliedJobs);
   });
@@ -173,9 +176,8 @@ const generateQuery = ({ findParams, sortParams }) => {
   return query;
 };
 
-
 module.exports = {
   getNonAppliedJob,
   getJobSearchQuery,
-  generateQuery
+  generateQuery,
 };
